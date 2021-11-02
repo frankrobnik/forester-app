@@ -23,7 +23,8 @@
     "plugins": [
         "react",
         "react-hooks",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "prettier"
     ],
     "rules": {
         "indent": [
@@ -41,7 +42,8 @@
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "prettier/prettier": ["error"]
     },
     "settings": {
         "react": {
