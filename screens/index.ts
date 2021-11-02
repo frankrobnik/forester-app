@@ -1,1 +1,1 @@
-export { Explorer } from './explorer/Explorer.container';
+export { Explorer } from './explorer/Explorer.screen';
