@@ -6,15 +6,17 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import { FAB } from 'react-native-paper';
 import MyTreesPanelContent from '../../components/myTreesPanelContent/MyTreesPanelContent.component';
 import ProfilePanelContent from '../../components/profilePanelContent/profilePanelContent.component';
+import { navActions } from '../../types/navActions.types';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const MainApp = () => {
-  const [mode, setMode] = useState<'explore' | 'myTrees' | 'profile' | 'tree' | 'newTree'>('explore');
+  const [mode, setMode] = useState<navActions>('explore');
   const myTreesRef = useRef<BottomSheet>(null);
   const profileRef = useRef<BottomSheet>(null);
   const treeRef = useRef<BottomSheet>(null);
   const newTreeRef = useRef<BottomSheet>(null);
 
-  const changeInterface = function (action: 'explore' | 'myTrees' | 'profile' | 'tree' | 'newTree'): void {
+  const changeInterface = function (action: navActions): void {
     setMode(action);
     // close all bottomsheets
     if (action !== 'myTrees' && myTreesRef.current) myTreesRef.current.snapToIndex(0);
@@ -47,12 +49,9 @@ export const MainApp = () => {
     <>
       <View style={{ flex: 1 }}>
         <Explorer />
-        <FAB
-          icon={'plus'}
-          style={{ position: 'absolute', margin: 16, right: 0, bottom: 96 }}
-          visible={mode === 'explore' ? true : false}
-          onPress={() => changeInterface('newTree')}
-        />
+        <SafeAreaView style={{ position: 'absolute', right: 0, bottom: 64 }}>
+          <FAB icon={'plus'} style={{ margin: 16 }} visible={mode === 'explore' ? true : false} onPress={() => changeInterface('newTree')} />
+        </SafeAreaView>
         <BottomSheet ref={myTreesRef} index={0} snapPoints={[44, '50%', '100%']} onChange={handleChange}>
           <MyTreesPanelContent />
         </BottomSheet>

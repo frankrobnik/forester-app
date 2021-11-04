@@ -2,10 +2,10 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Tab from '../tab/Tab.component';
-
+import { navActions } from '../../types/navActions.types';
 interface Props {
-  changeInterface: (action: 'explore' | 'myTrees' | 'profile' | 'tree' | 'newTree') => void;
-  mode: 'explore' | 'myTrees' | 'profile' | 'tree' | 'newTree';
+  changeInterface: (action: navActions) => void;
+  mode: navActions;
 }
 
 const BottomTabs = ({ changeInterface, mode }: Props) => {
