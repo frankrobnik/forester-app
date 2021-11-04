@@ -1,14 +1,20 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-interface Props {
-  test: number;
-}
-
-export const Explorer = (props: Props) => {
+export const Explorer = () => {
   return (
-    <View>
+    <View style={styles.container}>
       <Text>Explorer Screen</Text>
+      <View></View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#8DC027',
+  },
+});
