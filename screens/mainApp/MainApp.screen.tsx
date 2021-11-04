@@ -1,45 +1,68 @@
-import React, { useEffect, useRef } from 'react';
-import { StyleSheet, View, Dimensions } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text } from 'react-native';
 import BottomTabs from '../../components/bottomTabs/BottomTabs.component';
 import { Explorer } from '../explorer/Explorer.screen';
-import SlidingUpPanel from 'rn-sliding-up-panel';
+import BottomSheet from '@gorhom/bottom-sheet';
+import { FAB } from 'react-native-paper';
+import MyTreesPanelContent from '../../components/myTreesPanelContent/MyTreesPanelContent.component';
+import ProfilePanelContent from '../../components/profilePanelContent/profilePanelContent.component';
 
 export const MainApp = () => {
-  const { height } = Dimensions.get('window');
-  const myTreesPanelRef = useRef<SlidingUpPanel>(null);
+  const [mode, setMode] = useState<'explore' | 'myTrees' | 'profile' | 'tree' | 'newTree'>('explore');
+  const myTreesRef = useRef<BottomSheet>(null);
+  const profileRef = useRef<BottomSheet>(null);
+  const treeRef = useRef<BottomSheet>(null);
+  const newTreeRef = useRef<BottomSheet>(null);
 
-  const navigateToMyTrees = function (): void {
-    if (myTreesPanelRef?.current) {
-      myTreesPanelRef.current.show(height / 2);
+  const changeInterface = function (action: 'explore' | 'myTrees' | 'profile' | 'tree' | 'newTree'): void {
+    setMode(action);
+    // close all bottomsheets
+    if (action !== 'myTrees' && myTreesRef.current) myTreesRef.current.snapToIndex(0);
+    if (action !== 'profile' && profileRef.current) profileRef.current.snapToIndex(0);
+    if (action !== 'tree' && treeRef.current) treeRef.current.snapToIndex(0);
+    if (action !== 'newTree' && newTreeRef.current) newTreeRef.current.snapToIndex(0);
+
+    if (action === 'explore') {
+      // reset map position and zoom level
+    }
+    if (action === 'myTrees') {
+      if (myTreesRef.current) myTreesRef.current.snapToIndex(1);
+    }
+    if (action === 'profile') {
+      if (profileRef.current) profileRef.current.snapToIndex(1);
+    }
+    if (action === 'tree') {
+      if (treeRef.current) treeRef.current.snapToIndex(1);
+    }
+    if (action === 'newTree') {
+      if (newTreeRef.current) newTreeRef.current.snapToIndex(1);
     }
   };
 
   return (
     <>
-      <Explorer test={0} />
-      <SlidingUpPanel
-        ref={myTreesPanelRef}
-        draggableRange={{ top: height, bottom: 0 }}
-        snappingPoints={[height / 2, height]}
-        showBackdrop={false}
-        containerStyle={styles.panel}>
-        <View></View>
-        {/* <MyTreesPanelContent /> */}
-      </SlidingUpPanel>
-      <BottomTabs onPressMyTrees={navigateToMyTrees} />
+      <View style={{ flex: 1 }}>
+        <Explorer />
+        <FAB
+          icon={'plus'}
+          style={{ position: 'absolute', margin: 16, right: 0, bottom: 96 }}
+          visible={mode === 'explore' ? true : false}
+          onPress={() => changeInterface('newTree')}
+        />
+        <BottomSheet ref={myTreesRef} index={0} snapPoints={[44, '50%', '100%']}>
+          <MyTreesPanelContent />
+        </BottomSheet>
+        <BottomSheet ref={profileRef} index={0} snapPoints={[44, '50%', '100%']}>
+          <ProfilePanelContent bottomSheetRef={profileRef} />
+        </BottomSheet>
+        <BottomSheet ref={treeRef} index={0} snapPoints={[44, '50%', '100%']}>
+          <Text>single tree</Text>
+        </BottomSheet>
+        <BottomSheet ref={newTreeRef} index={0} snapPoints={[44, 240]}>
+          <Text>new tree</Text>
+        </BottomSheet>
+        <BottomTabs mode={mode} changeInterface={changeInterface} />
+      </View>
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  panel: {
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    backgroundColor: '#e9e9e9',
-    zIndex: 50,
-    position: 'relative',
-    shadowRadius: 8,
-    shadowColor: '#000000',
-    shadowOpacity: 0.05,
-  },
-});

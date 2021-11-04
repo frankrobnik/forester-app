@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface Props {
   name: string;
@@ -8,10 +9,11 @@ interface Props {
   onPress: () => void;
 }
 
-const Tab = ({ name, onPress }: Props) => {
+const Tab = ({ name, icon, onPress, active }: Props) => {
   return (
     <TouchableOpacity style={styles.tab} onPress={onPress}>
-      <Text>{name}</Text>
+      <MaterialCommunityIcons name={icon} size={24} color={'black'} />
+      <Text style={{ height: 20, lineHeight: 20, fontWeight: active ? 'bold' : 'normal' }}>{name}</Text>
     </TouchableOpacity>
   );
 };
