@@ -39,6 +39,10 @@ export const MainApp = () => {
     }
   };
 
+  const handleChange = function (index: number): void {
+    if (index === 0) setMode('explore');
+  };
+
   return (
     <>
       <View style={{ flex: 1 }}>
@@ -49,16 +53,16 @@ export const MainApp = () => {
           visible={mode === 'explore' ? true : false}
           onPress={() => changeInterface('newTree')}
         />
-        <BottomSheet ref={myTreesRef} index={0} snapPoints={[44, '50%', '100%']}>
+        <BottomSheet ref={myTreesRef} index={0} snapPoints={[44, '50%', '100%']} onChange={handleChange}>
           <MyTreesPanelContent />
         </BottomSheet>
-        <BottomSheet ref={profileRef} index={0} snapPoints={[44, '50%', '100%']}>
+        <BottomSheet ref={profileRef} index={0} snapPoints={[44, '50%', '100%']} onChange={handleChange}>
           <ProfilePanelContent bottomSheetRef={profileRef} />
         </BottomSheet>
-        <BottomSheet ref={treeRef} index={0} snapPoints={[44, '50%', '100%']}>
+        <BottomSheet ref={treeRef} index={0} snapPoints={[44, '50%', '100%']} onChange={handleChange}>
           <Text>single tree</Text>
         </BottomSheet>
-        <BottomSheet ref={newTreeRef} index={0} snapPoints={[44, 240]}>
+        <BottomSheet ref={newTreeRef} index={0} snapPoints={[44, 240]} onChange={handleChange}>
           <Text>new tree</Text>
         </BottomSheet>
         <BottomTabs mode={mode} changeInterface={changeInterface} />
