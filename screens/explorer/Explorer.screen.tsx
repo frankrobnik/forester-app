@@ -31,17 +31,14 @@ export const Explorer = ({ currentMode, changeMode }: Props) => {
       console.log(error);
     }
   };
-  console.log(map);
+
   useEffect(() => {
     callee();
   }, []);
   const callee = async () => {
     await getLocation();
   };
-  console.log('this is my location', location);
-  const handleRegionChange = (region: any) => {
-    console.log('region', region);
-  };
+
   const handleButtonPressed = () => {
     changeMode('newTree');
     setDisplayPin(true);
@@ -58,8 +55,7 @@ export const Explorer = ({ currentMode, changeMode }: Props) => {
         customMapStyle={googleMapsStyle}
         minZoomLevel={13}
         maxZoomLevel={18}
-        rotateEnabled={false}
-        onRegionChange={(region) => handleRegionChange(region)}>
+        rotateEnabled={false}>
         {displayPin && (
           <Marker
             draggable
