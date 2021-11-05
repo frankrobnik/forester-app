@@ -7,11 +7,8 @@ import MyTreesPanelContent from '../../components/myTreesPanelContent/MyTreesPan
 import ProfilePanelContent from '../../components/profilePanelContent/profilePanelContent.component';
 import { navAction } from '../../types/navAction.type';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-
-import { StyleSheet, Dimensions } from 'react-native';
 import { requestForegroundPermissionsAsync, watchPositionAsync, Accuracy } from 'expo-location';
 import { FAB } from 'react-native-paper';
-import { navAction } from '../../types/navAction.type';
 import googleMapsStyle from '../../utils/googleMapsStyle.json';
 
 export const MainApp = () => {
@@ -20,6 +17,9 @@ export const MainApp = () => {
   const profileRef = useRef<BottomSheet>(null);
   const treeRef = useRef<BottomSheet>(null);
   const newTreeRef = useRef<BottomSheet>(null);
+  const [location, setLocation] = useState({ latitude: 52.52, longitude: 13.405, latitudeDelta: 0.2, longitudeDelta: 0.2 });
+  const [pin, setPin] = useState({ latitude: 52.52, longitude: 13.405 });
+  const [displayPin, setDisplayPin] = useState(false);
 
   const changeMode = function (action: navAction): void {
     setCurrentMode(action);
@@ -49,11 +49,41 @@ export const MainApp = () => {
   const handleOnChange = function (index: number, compareMode: navAction) {
     if (currentMode === compareMode && index === 0) setCurrentMode('explore');
   };
+  const handleButtonPressed = () => {
+    changeMode('newTree');
+    setDisplayPin(true);
+    setPin({ latitude: location.latitude, longitude: location.longitude });
+  };
 
   return (
     <>
       <View style={{ flex: 1 }}>
-        <Explorer currentMode={currentMode} changeMode={changeMode} />
+        <MapView
+          style={styles.map}
+          initialRegion={location}
+          showsUserLocation={true}
+          provider={PROVIDER_GOOGLE}
+          customMapStyle={googleMapsStyle}
+          minZoomLevel={13}
+          maxZoomLevel={18}
+          rotateEnabled={false}>
+          {displayPin && (
+            <Marker
+              draggable
+              coordinate={pin}
+              image={require('../../assets/user-pin.png')}
+              title="test-titble"
+              onCalloutPress={() => alert('Clicked')}
+              onDragEnd={(e) => setPin({ latitude: e.nativeEvent.coordinate.latitude, longitude: e.nativeEvent.coordinate.longitude })}></Marker>
+          )}
+        </MapView>
+
+        <FAB
+          icon={'plus'}
+          style={{ margin: 16, position: 'absolute', right: 0, bottom: 0 }}
+          visible={currentMode === 'explore' ? true : false}
+          onPress={() => handleButtonPressed()}
+        />
         <BottomSheet ref={myTreesRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'myTrees')}>
           <MyTreesPanelContent />
         </BottomSheet>
