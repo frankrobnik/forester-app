@@ -1,11 +1,18 @@
-import React, { useRef, useState } from 'react';
-import { View, Text } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import BottomTabs from '../../components/bottomTabs/BottomTabs.component';
 import { Explorer } from '../explorer/Explorer.screen';
 import BottomSheet from '@gorhom/bottom-sheet';
 import MyTreesPanelContent from '../../components/myTreesPanelContent/MyTreesPanelContent.component';
 import ProfilePanelContent from '../../components/profilePanelContent/profilePanelContent.component';
 import { navAction } from '../../types/navAction.type';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+
+import { StyleSheet, Dimensions } from 'react-native';
+import { requestForegroundPermissionsAsync, watchPositionAsync, Accuracy } from 'expo-location';
+import { FAB } from 'react-native-paper';
+import { navAction } from '../../types/navAction.type';
+import googleMapsStyle from '../../utils/googleMapsStyle.json';
 
 export const MainApp = () => {
   const [currentMode, setCurrentMode] = useState<navAction>('explore');
