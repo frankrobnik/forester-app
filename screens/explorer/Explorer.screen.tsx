@@ -2,7 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import MapView, { AnimatedRegion, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { StyleSheet, View, Dimensions, Button } from 'react-native';
 import { requestForegroundPermissionsAsync, watchPositionAsync, Accuracy } from 'expo-location';
-export const Explorer = () => {
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { FAB } from 'react-native-paper';
+import { navAction } from '../../types/navAction.type';
+import googleMapsStyle from '../../utils/googleMapsStyle.json';
+
+interface Props {
+  currentMode: navAction;
+  changeMode: (action: navAction) => void;
+}
+
+export const Explorer = ({ currentMode, changeMode }: Props) => {
   const [location, setLocation] = useState({ latitude: 52.52, longitude: 13.405, latitudeDelta: 0.2, longitudeDelta: 0.2 });
   const [pin, setPin] = useState({ latitude: 52.52, longitude: 13.405 });
   const [displayPin, setDisplayPin] = useState(false);
@@ -36,7 +46,7 @@ export const Explorer = () => {
     console.log('region', region);
   };
   const handleButtonPressed = () => {
-    alert('clicked');
+    changeMode('newTree');
     setDisplayPin(true);
     setPin({ latitude: location.latitude, longitude: location.longitude });
   };
@@ -75,6 +85,10 @@ export const Explorer = () => {
         initialRegion={location}
         showsUserLocation={true}
         provider={PROVIDER_GOOGLE}
+        customMapStyle={googleMapsStyle}
+        minZoomLevel={13}
+        maxZoomLevel={18}
+        rotateEnabled={false}
         onRegionChange={(region) => handleRegionChange(region)}>
         {displayPin && (
           <Marker
@@ -86,16 +100,13 @@ export const Explorer = () => {
             onDragEnd={(e) => setPin({ latitude: e.nativeEvent.coordinate.latitude, longitude: e.nativeEvent.coordinate.longitude })}></Marker>
         )}
       </MapView>
-      <View
-        style={{
-          position: 'absolute',
-          top: '1%',
-          alignSelf: 'flex-end',
-          backgroundColor: '#5FC9F0',
-          margin: 50,
-        }}>
-        <Button title="+" color="#000000" onPress={() => handleButtonPressed()} />
-      </View>
+
+      <FAB
+        icon={'plus'}
+        style={{ margin: 16, position: 'absolute', right: 0, bottom: 0 }}
+        visible={currentMode === 'explore' ? true : false}
+        onPress={() => handleButtonPressed()}
+      />
     </View>
   );
 };
