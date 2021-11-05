@@ -34,9 +34,6 @@ export const Explorer = ({ currentMode, changeMode }: Props) => {
   console.log(map);
   useEffect(() => {
     callee();
-    getCamera();
-    setCamera();
-    animateCamera();
   }, []);
   const callee = async () => {
     await getLocation();
