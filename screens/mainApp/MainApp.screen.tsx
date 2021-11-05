@@ -1,15 +1,15 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import BottomTabs from '../../components/bottomTabs/BottomTabs.component';
-import { Explorer } from '../explorer/Explorer.screen';
 import BottomSheet from '@gorhom/bottom-sheet';
 import MyTreesPanelContent from '../../components/myTreesPanelContent/MyTreesPanelContent.component';
 import ProfilePanelContent from '../../components/profilePanelContent/profilePanelContent.component';
 import { navAction } from '../../types/navAction.type';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { requestForegroundPermissionsAsync, watchPositionAsync, Accuracy } from 'expo-location';
 import { FAB } from 'react-native-paper';
 import googleMapsStyle from '../../utils/googleMapsStyle.json';
+import { requestForegroundPermissionsAsync, watchPositionAsync, Accuracy } from 'expo-location';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const MainApp = () => {
   const [currentMode, setCurrentMode] = useState<navAction>('explore');
@@ -45,6 +45,27 @@ export const MainApp = () => {
       if (newTreeRef.current) newTreeRef.current.snapToIndex(1);
     }
   };
+  const getLocation = async () => {
+    try {
+      const { status } = await requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('not granted');
+      }
+      const locations = await watchPositionAsync({ accuracy: Accuracy.High, timeInterval: 10000, distanceInterval: 1 }, (loc) => {
+        const { latitude, longitude } = loc.coords;
+        setLocation({ latitude: latitude, longitude: longitude, latitudeDelta: 0.02, longitudeDelta: 0.02 });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    callee();
+  }, []);
+  const callee = async () => {
+    await getLocation();
+  };
 
   const handleOnChange = function (index: number, compareMode: navAction) {
     if (currentMode === compareMode && index === 0) setCurrentMode('explore');
@@ -77,13 +98,9 @@ export const MainApp = () => {
               onDragEnd={(e) => setPin({ latitude: e.nativeEvent.coordinate.latitude, longitude: e.nativeEvent.coordinate.longitude })}></Marker>
           )}
         </MapView>
-
-        <FAB
-          icon={'plus'}
-          style={{ margin: 16, position: 'absolute', right: 0, bottom: 0 }}
-          visible={currentMode === 'explore' ? true : false}
-          onPress={() => handleButtonPressed()}
-        />
+        <SafeAreaView style={{ position: 'absolute', bottom: 64, right: 0 }}>
+          <FAB icon={'plus'} style={{ margin: 16 }} visible={currentMode === 'explore' ? true : false} onPress={() => handleButtonPressed()} />
+        </SafeAreaView>
         <BottomSheet ref={myTreesRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'myTrees')}>
           <MyTreesPanelContent />
         </BottomSheet>
@@ -101,3 +118,8 @@ export const MainApp = () => {
     </>
   );
 };
+const styles = StyleSheet.create({
+  map: {
+    flex: 1,
+  },
+});
