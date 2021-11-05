@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import BottomTabs from '../../components/bottomTabs/BottomTabs.component';
 import BottomSheet from '@gorhom/bottom-sheet';
 import MyTreesPanelContent from '../../components/myTreesPanelContent/MyTreesPanelContent.component';
@@ -21,7 +21,7 @@ export const MainApp = () => {
   const [location, setLocation] = useState({ latitude: 52.52, longitude: 13.405, latitudeDelta: 0.2, longitudeDelta: 0.2 });
   const [pin, setPin] = useState({ latitude: 52.52, longitude: 13.405 });
   const [displayPin, setDisplayPin] = useState<boolean>(false);
-  const [treeName, setTreeName] = useState<string>('');
+  const [treeName, setTreeName] = useState('');
 
   const changeMode = function (action: navAction): void {
     setCurrentMode(action);
@@ -79,49 +79,55 @@ export const MainApp = () => {
   };
 
   return (
-    <>
-      <View style={{ flex: 1 }}>
-        <MapView
-          style={styles.map}
-          initialRegion={location}
-          showsUserLocation={true}
-          provider={PROVIDER_GOOGLE}
-          customMapStyle={googleMapsStyle}
-          minZoomLevel={13}
-          maxZoomLevel={18}
-          rotateEnabled={false}>
-          {displayPin && (
-            <Marker
-              draggable
-              coordinate={pin}
-              image={require('../../assets/user-pin.png')}
-              title="test-titble"
-              onCalloutPress={() => alert('Clicked')}
-              onDragEnd={(e) => setPin({ latitude: e.nativeEvent.coordinate.latitude, longitude: e.nativeEvent.coordinate.longitude })}></Marker>
-          )}
-        </MapView>
-        <SafeAreaView style={{ position: 'absolute', bottom: 64, right: 0 }}>
-          <FAB icon={'plus'} style={{ margin: 16 }} visible={currentMode === 'explore' ? true : false} onPress={() => handleButtonPressed()} />
-        </SafeAreaView>
-        <BottomSheet ref={myTreesRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'myTrees')}>
-          <MyTreesPanelContent />
-        </BottomSheet>
-        <BottomSheet ref={profileRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'profile')}>
-          <ProfilePanelContent bottomSheetRef={profileRef} />
-        </BottomSheet>
-        <BottomSheet ref={treeRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'tree')}>
-          <Text>single tree</Text>
-        </BottomSheet>
-        <BottomSheet ref={newTreeRef} index={0} snapPoints={[44, 240]} onChange={(i) => handleOnChange(i, 'newTree')}>
-          <NewTreePanelContent setTreeName={setTreeName} />
-        </BottomSheet>
-        <BottomTabs currentMode={currentMode} changeMode={changeMode} />
-      </View>
-    </>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+      <>
+        <View style={{ flex: 1 }}>
+          <MapView
+            onPress={Keyboard.dismiss}
+            style={styles.map}
+            initialRegion={location}
+            showsUserLocation={true}
+            provider={PROVIDER_GOOGLE}
+            customMapStyle={googleMapsStyle}
+            minZoomLevel={13}
+            maxZoomLevel={18}
+            rotateEnabled={false}>
+            {displayPin && (
+              <Marker
+                draggable
+                coordinate={pin}
+                image={require('../../assets/user-pin.png')}
+                title={treeName}
+                onCalloutPress={() => alert('Clicked')}
+                onDragEnd={(e) => setPin({ latitude: e.nativeEvent.coordinate.latitude, longitude: e.nativeEvent.coordinate.longitude })}></Marker>
+            )}
+          </MapView>
+          <SafeAreaView style={{ position: 'absolute', bottom: 64, right: 0 }}>
+            <FAB icon={'plus'} style={{ margin: 16 }} visible={currentMode === 'explore' ? true : false} onPress={() => handleButtonPressed()} />
+          </SafeAreaView>
+          <BottomSheet ref={myTreesRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'myTrees')}>
+            <MyTreesPanelContent />
+          </BottomSheet>
+          <BottomSheet ref={profileRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'profile')}>
+            <ProfilePanelContent bottomSheetRef={profileRef} />
+          </BottomSheet>
+          <BottomSheet ref={treeRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'tree')}>
+            <Text>single tree</Text>
+          </BottomSheet>
+          <BottomSheet ref={newTreeRef} index={0} snapPoints={[44, 300]} onChange={(i) => handleOnChange(i, 'newTree')}>
+            <NewTreePanelContent setTreeName={setTreeName} />
+          </BottomSheet>
+          <BottomTabs currentMode={currentMode} changeMode={changeMode} />
+        </View>
+      </>
+    </KeyboardAvoidingView>
   );
 };
 const styles = StyleSheet.create({
   map: {
+    flex: 1,
+  },
+  container: {
     flex: 1,
   },
 });
