@@ -47,33 +47,6 @@ export const Explorer = ({ currentMode, changeMode }: Props) => {
     setDisplayPin(true);
     setPin({ latitude: location.latitude, longitude: location.longitude });
   };
-  const getCamera = async () => {
-    // @ts-ignore
-    const camera = await map.getCamera();
-    // @ts-ignore
-    alert('Current camera', JSON.stringify(camera), [{ text: 'OK' }], {
-      cancelable: true,
-    });
-  };
-  const setCamera = async () => {
-    // @ts-ignore
-    const camera = await map.getCamera();
-    // @ts-ignore
-    map.setCamera({
-      heading: camera.heading + 10,
-    });
-  };
-  const animateCamera = async () => {
-    // @ts-ignore
-    const camera = await map.getCamera();
-    camera.heading += 40;
-    camera.pitch += 10;
-    camera.altitude += 1000;
-    camera.zoom -= 1;
-    camera.center.latitude += 0.5;
-    // @ts-ignore
-    map.animateCamera(camera, { duration: 2000 });
-  };
   return (
     <View style={styles.container}>
       <MapView
