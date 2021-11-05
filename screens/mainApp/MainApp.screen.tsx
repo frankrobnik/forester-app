@@ -10,7 +10,7 @@ import { FAB } from 'react-native-paper';
 import googleMapsStyle from '../../utils/googleMapsStyle.json';
 import { requestForegroundPermissionsAsync, watchPositionAsync, Accuracy } from 'expo-location';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import newTreePanelContent from '../../components/newTreePanelContent/newTreePanelContent';
+import NewTreePanelContent from '../../components/NewTreePanelContent/NewTreePanelContent';
 
 export const MainApp = () => {
   const [currentMode, setCurrentMode] = useState<navAction>('explore');
@@ -20,7 +20,8 @@ export const MainApp = () => {
   const newTreeRef = useRef<BottomSheet>(null);
   const [location, setLocation] = useState({ latitude: 52.52, longitude: 13.405, latitudeDelta: 0.2, longitudeDelta: 0.2 });
   const [pin, setPin] = useState({ latitude: 52.52, longitude: 13.405 });
-  const [displayPin, setDisplayPin] = useState(false);
+  const [displayPin, setDisplayPin] = useState<boolean>(false);
+  const [treeName, setTreeName] = useState<string>('');
 
   const changeMode = function (action: navAction): void {
     setCurrentMode(action);
@@ -112,7 +113,7 @@ export const MainApp = () => {
           <Text>single tree</Text>
         </BottomSheet>
         <BottomSheet ref={newTreeRef} index={0} snapPoints={[44, 240]} onChange={(i) => handleOnChange(i, 'newTree')}>
-          <newTreePanelContent />
+          <NewTreePanelContent setTreeName={setTreeName} />
         </BottomSheet>
         <BottomTabs currentMode={currentMode} changeMode={changeMode} />
       </View>
