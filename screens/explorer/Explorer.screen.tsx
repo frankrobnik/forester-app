@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import MapView, { AnimatedRegion, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { StyleSheet, View, Dimensions, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { StyleSheet, View, Dimensions } from 'react-native';
 import { requestForegroundPermissionsAsync, watchPositionAsync, Accuracy } from 'expo-location';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { FAB } from 'react-native-paper';
 import { navAction } from '../../types/navAction.type';
 import googleMapsStyle from '../../utils/googleMapsStyle.json';
@@ -16,7 +15,6 @@ export const Explorer = ({ currentMode, changeMode }: Props) => {
   const [location, setLocation] = useState({ latitude: 52.52, longitude: 13.405, latitudeDelta: 0.2, longitudeDelta: 0.2 });
   const [pin, setPin] = useState({ latitude: 52.52, longitude: 13.405 });
   const [displayPin, setDisplayPin] = useState(false);
-  const map = useRef(null);
   const getLocation = async () => {
     try {
       const { status } = await requestForegroundPermissionsAsync();
@@ -47,7 +45,6 @@ export const Explorer = ({ currentMode, changeMode }: Props) => {
   return (
     <View style={styles.container}>
       <MapView
-        ref={map}
         style={styles.map}
         initialRegion={location}
         showsUserLocation={true}
