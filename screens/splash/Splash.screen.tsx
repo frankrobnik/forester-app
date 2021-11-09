@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 
 const Splash = () => {
   return (
-    <View style={styles.container}>
-      <Text>SplashScreen</Text>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Image source={require('../../assets/logo.png')} style={styles.logo} />
     </View>
   );
 };
@@ -12,10 +12,10 @@ const Splash = () => {
 export default Splash;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  logo: {
+    height: 32,
+    width: 138,
+    margin: 24,
+    alignSelf: 'center',
   },
 });
