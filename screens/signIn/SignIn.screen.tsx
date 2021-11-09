@@ -22,10 +22,10 @@ const SignIn = ({ navigation }: Props) => {
       <SafeAreaView style={styles.safeAreaView}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <Logo />
-          <TextInput mode="outlined" label="Email" value={email} onChangeText={setEmail} style={styles.input} />
+          <TextInput mode="outlined" label="email" value={email} onChangeText={setEmail} style={styles.input} />
           <TextInput
             mode="outlined"
-            label="Password"
+            label="password"
             value={password}
             onChangeText={setPassword}
             style={styles.input}
