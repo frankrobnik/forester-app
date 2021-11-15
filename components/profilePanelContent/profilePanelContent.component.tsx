@@ -1,13 +1,19 @@
 import BottomSheet from '@gorhom/bottom-sheet';
-import React from 'react';
+import React, { Dispatch } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { IconButton } from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
+import { AuthAction } from '../../interfaces/authReducer/AuthReducer.interface';
 
 interface Props {
   bottomSheetRef: React.RefObject<BottomSheet>;
+  authDispatch: Dispatch<AuthAction>;
 }
 
-const ProfilePanelContent = ({ bottomSheetRef }: Props) => {
+const ProfilePanelContent = ({ bottomSheetRef, authDispatch }: Props) => {
+  const handleSignOut = function () {
+    authDispatch({ type: 'SIGN_OUT' });
+  };
+
   return (
     <View style={styles.container}>
       <IconButton
@@ -16,7 +22,8 @@ const ProfilePanelContent = ({ bottomSheetRef }: Props) => {
         style={{ position: 'absolute', top: 0, right: 0, margin: 16 }}
         onPress={() => bottomSheetRef?.current?.snapToIndex(2)}
       />
-      <Text></Text>
+      <Text>user profile</Text>
+      <Button onPress={handleSignOut}>logout</Button>
     </View>
   );
 };

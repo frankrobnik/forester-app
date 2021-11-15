@@ -1,10 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { Dispatch, useRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import BottomTabs from '../../components/bottomTabs/BottomTabs.component';
 import BottomSheet from '@gorhom/bottom-sheet';
 import MyTreesPanelContent from '../../components/myTreesPanelContent/MyTreesPanelContent.component';
 import ProfilePanelContent from '../../components/profilePanelContent/profilePanelContent.component';
 import { navAction } from '../../types/navAction.type';
+import { AuthAction } from '../../interfaces/authReducer/AuthReducer.interface';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { FAB } from 'react-native-paper';
 import googleMapsStyle from '../../utils/googleMapsStyle.json';
@@ -12,7 +13,11 @@ import { requestForegroundPermissionsAsync, watchPositionAsync, Accuracy } from 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NewTreePanelContent from '../../components/NewTreePanelContent/NewTreePanelContent';
 
-export const MainApp = () => {
+interface Props {
+  authDispatch: Dispatch<AuthAction>;
+}
+
+export const MainApp = ({ authDispatch }: Props) => {
   const [currentMode, setCurrentMode] = useState<navAction>('explore');
   const myTreesRef = useRef<BottomSheet>(null);
   const profileRef = useRef<BottomSheet>(null);
