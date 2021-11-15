@@ -1,6 +1,6 @@
-export interface User {
+export interface AuthResponse {
+  accessToken: string;
   username: string;
   email: string;
-  password: string;
   experience: number;
 }

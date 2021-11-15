@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { Dispatch, useRef, useState } from 'react';
 import { View, Text } from 'react-native';
 import BottomTabs from '../../components/bottomTabs/BottomTabs.component';
 import { Explorer } from '../explorer/Explorer.screen';
@@ -6,8 +6,13 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import MyTreesPanelContent from '../../components/myTreesPanelContent/MyTreesPanelContent.component';
 import ProfilePanelContent from '../../components/profilePanelContent/profilePanelContent.component';
 import { navAction } from '../../types/navAction.type';
+import { AuthAction } from '../../interfaces/authReducer/AuthReducer.interface';
 
-export const MainApp = () => {
+interface Props {
+  authDispatch: Dispatch<AuthAction>;
+}
+
+export const MainApp = ({ authDispatch }: Props) => {
   const [currentMode, setCurrentMode] = useState<navAction>('explore');
   const myTreesRef = useRef<BottomSheet>(null);
   const profileRef = useRef<BottomSheet>(null);
@@ -51,7 +56,7 @@ export const MainApp = () => {
           <MyTreesPanelContent />
         </BottomSheet>
         <BottomSheet ref={profileRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'profile')}>
-          <ProfilePanelContent bottomSheetRef={profileRef} />
+          <ProfilePanelContent bottomSheetRef={profileRef} authDispatch={authDispatch} />
         </BottomSheet>
         <BottomSheet ref={treeRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'tree')}>
           <Text>single tree</Text>

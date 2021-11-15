@@ -1,21 +1,43 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { Dispatch, useState } from 'react';
 import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { Button, useTheme, TextInput } from 'react-native-paper';
+import { Button, useTheme, TextInput, Snackbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Logo from '../../components/logo/Logo.component';
 import { useToggle } from '../../hooks/useToggle/useToggle.hook';
+import forester from '../../services/forester.service';
 import { navStackParamList } from '../../types/navStackParamList.type';
+import { AuthAction } from '../../interfaces/authReducer/AuthReducer.interface';
+import { AuthResponse } from '../../interfaces/authResponse/AuthResponse.interface';
 
-type Props = NativeStackScreenProps<navStackParamList, 'SignIn'>;
+interface Props {
+  navigation: NativeStackNavigationProp<navStackParamList, 'SignIn'>;
+  authDispatch: Dispatch<AuthAction>;
+}
 
-const SignIn = ({ navigation }: Props) => {
+const SignIn = ({ navigation, authDispatch }: Props) => {
   const { colors } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordHidden, togglePasswordHidden] = useToggle(true);
-
   const showHidePassword = <TextInput.Icon name={passwordHidden ? 'eye' : 'eye-off'} onPress={togglePasswordHidden} />;
+  const [errorMessage, setErrorMessage] = useState('');
+  const [visibleMessage, setVisibleMessage] = useState(false);
+
+  const handlePressRegister = async () => {
+    try {
+      const response: AuthResponse = await forester.login({ email, password });
+      if (!response.accessToken) throw new Error('Email or password is incorrect.');
+      else authDispatch({ type: 'SIGN_IN', token: response.accessToken });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setErrorMessage(err.message);
+        setVisibleMessage(true);
+      }
+    }
+  };
+
+  const onDismissMessage = () => setVisibleMessage(false);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ ...styles.container, backgroundColor: colors.background }}>
@@ -32,12 +54,15 @@ const SignIn = ({ navigation }: Props) => {
             secureTextEntry={passwordHidden}
             right={showHidePassword}
           />
-          <Button mode="contained" disabled={email === '' || password === '' ? true : false} style={styles.login}>
+          <Button mode="contained" disabled={email === '' || password === '' ? true : false} onPress={handlePressRegister} style={styles.login}>
             Login
           </Button>
           <Button icon="arrow-right" onPress={() => navigation.navigate('SignUp')} style={styles.signUp}>
             sign up
           </Button>
+          <Snackbar onDismiss={onDismissMessage} visible={visibleMessage} duration={5000}>
+            {errorMessage}
+          </Snackbar>
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>

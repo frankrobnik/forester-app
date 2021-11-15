@@ -1,37 +1,45 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, useEffect, useState } from 'react';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { KeyboardAvoidingView, Platform, StyleSheet, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { navStackParamList } from '../../types/navStackParamList.type';
 import { Button, Paragraph, Snackbar, TextInput, useTheme } from 'react-native-paper';
+import { navStackParamList } from '../../types/navStackParamList.type';
 import { useToggle } from '../../hooks/useToggle/useToggle.hook';
 import { validateEmail, validatePassword, validateUsername } from '../../utils/validateInput.util';
 import Logo from '../../components/logo/Logo.component';
+import forester from '../../services/forester.service';
+import { AuthAction } from '../../interfaces/authReducer/AuthReducer.interface';
+import { AuthResponse } from '../../interfaces/authResponse/AuthResponse.interface';
 
-type Props = NativeStackScreenProps<navStackParamList, 'SignUp'>;
+interface Props {
+  navigation: NativeStackNavigationProp<navStackParamList, 'SignUp'>;
+  authDispatch: Dispatch<AuthAction>;
+}
 
-const SignUp = ({ navigation }: Props) => {
+const SignUp = ({ navigation, authDispatch }: Props) => {
   const { colors } = useTheme();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [passwordHidden, togglePasswordHidden] = useToggle(true);
+  const togglePassword = <TextInput.Icon name={passwordHidden ? 'eye' : 'eye-off'} onPress={togglePasswordHidden} />;
   const [validForm, setValidForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [visibleMessage, setVisibleMessage] = useState(false);
-  const togglePassword = <TextInput.Icon name={passwordHidden ? 'eye' : 'eye-off'} onPress={togglePasswordHidden} />;
 
   useEffect(() => {
     if (username !== '' && email !== '' && password !== '') setValidForm(true);
     else if (validForm) setValidForm(false);
   }, [username, email, password]);
 
-  const handlePressRegister = () => {
+  const handlePressRegister = async () => {
     try {
       validateUsername(username);
       validateEmail(email);
       validatePassword(password);
-      // api call
+      const response: AuthResponse = await forester.register({ username, email, password });
+      if (!response.accessToken) throw new Error(`Sorry, we are having trouble connecting to our server. Please try again in a few minutes.`);
+      else authDispatch({ type: 'SIGN_IN', token: response.accessToken });
     } catch (err: unknown) {
       if (err instanceof Error) {
         setErrorMessage(err.message);
@@ -68,7 +76,7 @@ const SignUp = ({ navigation }: Props) => {
             back to login
           </Button>
         </ScrollView>
-        <Snackbar onDismiss={onDismissMessage} visible={visibleMessage} duration={3000}>
+        <Snackbar onDismiss={onDismissMessage} visible={visibleMessage} duration={5000}>
           {errorMessage}
         </Snackbar>
       </SafeAreaView>
