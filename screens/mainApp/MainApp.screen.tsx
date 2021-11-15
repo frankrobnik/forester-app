@@ -114,7 +114,7 @@ export const MainApp = ({ authDispatch }: Props) => {
             <MyTreesPanelContent />
           </BottomSheet>
           <BottomSheet ref={profileRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'profile')}>
-            <ProfilePanelContent bottomSheetRef={profileRef} />
+            <ProfilePanelContent bottomSheetRef={profileRef} authDispatch={authDispatch} />
           </BottomSheet>
           <BottomSheet ref={treeRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'tree')}>
             <Text>single tree</Text>
