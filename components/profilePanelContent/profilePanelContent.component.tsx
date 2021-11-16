@@ -1,17 +1,18 @@
 import BottomSheet from '@gorhom/bottom-sheet';
-import React, { Dispatch } from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, IconButton } from 'react-native-paper';
-import { AuthAction } from '../../interfaces/authReducer/AuthReducer.interface';
+import { AuthContext } from '../../context/Auth.context';
 
 interface Props {
   bottomSheetRef: React.RefObject<BottomSheet>;
-  authDispatch: Dispatch<AuthAction>;
 }
 
-const ProfilePanelContent = ({ bottomSheetRef, authDispatch }: Props) => {
+const ProfilePanelContent = ({ bottomSheetRef }: Props) => {
+  const authContext = useContext(AuthContext);
+
   const handleSignOut = function () {
-    authDispatch({ type: 'SIGN_OUT' });
+    authContext?.signOut();
   };
 
   return (

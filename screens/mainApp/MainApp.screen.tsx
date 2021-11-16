@@ -1,11 +1,10 @@
-import React, { Dispatch, useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import BottomTabs from '../../components/bottomTabs/BottomTabs.component';
 import BottomSheet from '@gorhom/bottom-sheet';
 import MyTreesPanelContent from '../../components/myTreesPanelContent/MyTreesPanelContent.component';
 import ProfilePanelContent from '../../components/profilePanelContent/profilePanelContent.component';
 import { navAction } from '../../types/navAction.type';
-import { AuthAction } from '../../interfaces/authReducer/AuthReducer.interface';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { FAB } from 'react-native-paper';
 import googleMapsStyle from '../../utils/googleMapsStyle.json';
@@ -13,11 +12,7 @@ import { requestForegroundPermissionsAsync, watchPositionAsync, Accuracy } from 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NewTreePanelContent from '../../components/NewTreePanelContent/NewTreePanelContent';
 
-interface Props {
-  authDispatch: Dispatch<AuthAction>;
-}
-
-export const MainApp = ({ authDispatch }: Props) => {
+export const MainApp = () => {
   const [currentMode, setCurrentMode] = useState<navAction>('explore');
   const myTreesRef = useRef<BottomSheet>(null);
   const profileRef = useRef<BottomSheet>(null);
@@ -114,7 +109,7 @@ export const MainApp = ({ authDispatch }: Props) => {
             <MyTreesPanelContent />
           </BottomSheet>
           <BottomSheet ref={profileRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'profile')}>
-            <ProfilePanelContent bottomSheetRef={profileRef} authDispatch={authDispatch} />
+            <ProfilePanelContent bottomSheetRef={profileRef} />
           </BottomSheet>
           <BottomSheet ref={treeRef} index={0} snapPoints={[44, '50%', '100%']} onChange={(i) => handleOnChange(i, 'tree')}>
             <Text>single tree</Text>

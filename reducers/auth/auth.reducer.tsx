@@ -3,7 +3,7 @@ import { AuthAction, AuthState } from '../../interfaces/authReducer/AuthReducer.
 const authInitialState: AuthState = {
   isLoading: true,
   isSignout: false,
-  userToken: null,
+  accessToken: null,
 };
 
 const authReducer = (prevState: AuthState, action: AuthAction): AuthState => {
@@ -12,19 +12,19 @@ const authReducer = (prevState: AuthState, action: AuthAction): AuthState => {
       return {
         ...prevState,
         isLoading: false,
-        userToken: action.token!,
+        accessToken: action.accessToken!,
       };
     case 'SIGN_IN':
       return {
         ...prevState,
         isSignout: false,
-        userToken: action.token!,
+        accessToken: action.accessToken!,
       };
     case 'SIGN_OUT':
       return {
         ...prevState,
         isSignout: true,
-        userToken: null,
+        accessToken: null,
       };
     default:
       return { ...prevState };

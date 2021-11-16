@@ -1,5 +1,5 @@
-import React, { Dispatch, useEffect, useState } from 'react';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useContext, useEffect, useState } from 'react';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { KeyboardAvoidingView, Platform, StyleSheet, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Paragraph, Snackbar, TextInput, useTheme } from 'react-native-paper';
@@ -8,15 +8,13 @@ import { useToggle } from '../../hooks/useToggle/useToggle.hook';
 import { validateEmail, validatePassword, validateUsername } from '../../utils/validateInput.util';
 import Logo from '../../components/logo/Logo.component';
 import forester from '../../services/forester.service';
-import { AuthAction } from '../../interfaces/authReducer/AuthReducer.interface';
 import { AuthResponse } from '../../interfaces/authResponse/AuthResponse.interface';
+import { AuthContext } from '../../context/Auth.context';
 
-interface Props {
-  navigation: NativeStackNavigationProp<navStackParamList, 'SignUp'>;
-  authDispatch: Dispatch<AuthAction>;
-}
+type Props = NativeStackScreenProps<navStackParamList, 'SignIn'>;
 
-const SignUp = ({ navigation, authDispatch }: Props) => {
+const SignUp = ({ navigation }: Props) => {
+  const authContext = useContext(AuthContext);
   const { colors } = useTheme();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -25,7 +23,7 @@ const SignUp = ({ navigation, authDispatch }: Props) => {
   const togglePassword = <TextInput.Icon name={passwordHidden ? 'eye' : 'eye-off'} onPress={togglePasswordHidden} />;
   const [validForm, setValidForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
-  const [visibleMessage, setVisibleMessage] = useState(false);
+  const [errorIsVissible, setErrorIsVisible] = useState(false);
 
   useEffect(() => {
     if (username !== '' && email !== '' && password !== '') setValidForm(true);
@@ -38,17 +36,19 @@ const SignUp = ({ navigation, authDispatch }: Props) => {
       validateEmail(email);
       validatePassword(password);
       const response: AuthResponse = await forester.register({ username, email, password });
-      if (!response.accessToken) throw new Error(`Sorry, we are having trouble connecting to our server. Please try again in a few minutes.`);
-      else authDispatch({ type: 'SIGN_IN', token: response.accessToken });
+      if (!response.accessToken) {
+        throw new Error(`Sorry, we are having trouble connecting to our server. Please try again in a few minutes.`);
+      } else {
+        // TODO: userContext save user data (AuthResponse {username, email, experience})
+        authContext?.signIn(response.accessToken);
+      }
     } catch (err: unknown) {
       if (err instanceof Error) {
         setErrorMessage(err.message);
-        setVisibleMessage(true);
+        setErrorIsVisible(true);
       }
     }
   };
-
-  const onDismissMessage = () => setVisibleMessage(false);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ ...styles.container, backgroundColor: colors.background }}>
@@ -76,7 +76,7 @@ const SignUp = ({ navigation, authDispatch }: Props) => {
             back to login
           </Button>
         </ScrollView>
-        <Snackbar onDismiss={onDismissMessage} visible={visibleMessage} duration={5000}>
+        <Snackbar onDismiss={() => setErrorIsVisible(false)} visible={errorIsVissible} duration={5000}>
           {errorMessage}
         </Snackbar>
       </SafeAreaView>
