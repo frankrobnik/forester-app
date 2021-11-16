@@ -12,13 +12,13 @@ const authReducer = (prevState: AuthState, action: AuthAction): AuthState => {
       return {
         ...prevState,
         isLoading: false,
-        accessToken: action.accessToken!,
+        accessToken: action?.accessToken || null,
       };
     case 'SIGN_IN':
       return {
         ...prevState,
         isSignout: false,
-        accessToken: action.accessToken!,
+        accessToken: action?.accessToken || null,
       };
     case 'SIGN_OUT':
       return {
